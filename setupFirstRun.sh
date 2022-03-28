@@ -69,6 +69,10 @@ setup_sshd(){
 
 install_webdev_packages(){
 	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!"
+
+	# Installing mariaDB in FreeBSD:
+	# https://www.osradar.com/how-to-install-mariadb-on-freebsd-12/
+
 }
 
 # Install the bare minimum of necessary packages
