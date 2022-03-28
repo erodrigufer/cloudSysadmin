@@ -5,7 +5,7 @@ OS=''
 MAIN_USER="hap"
 # lf-26 is the Go terminal file manager
 PACKAGES2INSTALL="git vim curl go lf-26"
-WEBDEVPACKAGES="mariadb105"
+WEBDEVPACKAGES="mariadb105-server-10.5.15"
 #########################################################################
 # Colors for the text (they do not set the background color)
 COLOR_GREEN='\e[0;32m'
