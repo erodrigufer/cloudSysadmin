@@ -29,7 +29,7 @@ print_error(){
 # primary FreeBSD and Ubuntu)
 check_os(){
 	echo "* Checking system distribution..."
-	if [ uname = "Linux" ]; then
+	if [ $(uname) = "Linux" ]; then
 		# print Linux_Standard_Base release ID use grep in egrep mode (-e), 
 		# being case-insensitive (-i) and check for either ubuntu or debian
 		# About egrep: with egrep it is easier to write the OR logic ( | ) 
@@ -37,9 +37,11 @@ check_os(){
 		# grammar of grep
 		lsb_release -i | grep -i -E "(ubuntu|debian|kali)" || { print_error "System must be debian-based to run script."; exit -1 ; }
 		OS="linux"
+		return
 	fi
-	if [ uname = "FreeBSD" ]; then
+	if [ $(uname) = "FreeBSD" ]; then
 		OS="freebsd"
+		return
 	fi
 
 }
