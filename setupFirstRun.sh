@@ -5,7 +5,7 @@ OS=''
 MAIN_USER="hap"
 # lf-26 is the Go terminal file manager
 PACKAGES2INSTALL="git vim curl go lf-26"
-
+WEBDEVPACKAGES="mariadb105"
 #########################################################################
 # Colors for the text (they do not set the background color)
 COLOR_GREEN='\e[0;32m'
@@ -67,6 +67,10 @@ setup_sshd(){
 	echo "Done"
 }
 
+install_webdev_packages(){
+	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!"
+}
+
 # Install the bare minimum of necessary packages
 install_bare_packages(){
 	if [ ${OS} = "freebsd" ]; then
@@ -78,6 +82,9 @@ install_bare_packages(){
 		# To get more info about a particular package run:
 		# pkg search -R <name>
 		pkg install --yes ${PACKAGES2INSTALL} && print_info "${PACKAGES2INSTALL} were successfully installed!" || { print_error "Packages installation failed!"; exit -1; }
+		
+		install_webdev_packages  || { print_error "Webdev packages installation failed!"; exit -1; }
+
 		return
 	fi
 
@@ -87,6 +94,7 @@ install_bare_packages(){
 
 }
 
+# configure vim, its plugins, tmux, lf, all dotfiles
 configure_dotfiles(){
 	# Install vim-plug to handle plugins
 	# Reference: https://github.com/junegunn/vim-plug
@@ -105,10 +113,30 @@ configure_dotfiles(){
 	
 }
 
+# Configure sshd properly, do not disconnect client after short idle time
+configure_ssh(){
+	cd /etc/ssh
+	# Create a copy of the sshd original configuration, before changing it
+	cp ./sshd_config ./sshd_config.bak
+
+	# Change the configuration of sshd, so that it does not automatically close
+	# after the client has been idle for a while, it will now only disconnect
+	# after 2 hours of inactivity.
+	# Reference: https://www.simplified.guide/ssh/disable-timeout
+	# (sed) -i: Replace in-place, and append commands with -e
+	# replace everything after and before the pattern with .*
+	sed -i '' -e 's/^.*TCPKeepAlive.*/TCPKeepAlive no/' -e 's/^.*ClientAliveInterval.*/ClientAliveInterval 30/' -e 's/^.*ClientAliveCountMax.*/ClientAliveCountMax 240/' ./sshd_config	
+
+	# Restart sshd with new configuration
+	service sshd restart
+
+}
+
 main(){
 	check_os
 	install_bare_packages	
 	configure_dotfiles
+	configure_ssh
 }
 
 main
