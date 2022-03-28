@@ -64,18 +64,24 @@ setup_sshd(){
 }
 
 # Install the bare minimum of necessary packages
-bare_packages(){
-	# Update the available remote repositories
-	pkg update	
+install_bare_packages(){
+	if [ ${OS} = "freebsd" ]; then
+		# Update the available remote repositories
+		pkg update	
+		# Install packages without further confirmation (--yes)
+		# For more information take a look at 'man pkg-install'
+		pkg install --yes git vim curl go
+	fi
 
 }
 
 main(){
 	check_os
 	echo $OS
-	
+	install_bare_packages	
 }
 
 main
 
+# install lf, golang, git
 # setup vim, setup lf, setup dotfiles (tmux, etc)
