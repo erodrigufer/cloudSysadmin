@@ -67,7 +67,7 @@ setup_sshd(){
 install_bare_packages(){
 	if [ ${OS} = "freebsd" ]; then
 		# lf-26 is the Go terminal file manager
-		local packages2install = "git vim curl go lf-26"
+		local PACKAGES2INSTALL="git vim curl go lf-26"
 
 		# Update the available remote repositories
 		pkg update	
@@ -75,7 +75,7 @@ install_bare_packages(){
 		# For more information take a look at 'man pkg-install'
 		# To get more info about a particular package run:
 		# pkg search -R <name>
-		pkg install --yes ${packages2install} && print_info "${packages2install} were successfully installed!"
+		pkg install --yes ${PACKAGES2INSTALL} && print_info "${PACKAGES2INSTALL} were successfully installed!"
 	fi
 
 }
