@@ -70,7 +70,10 @@ install_bare_packages(){
 		pkg update	
 		# Install packages without further confirmation (--yes)
 		# For more information take a look at 'man pkg-install'
-		pkg install --yes git vim curl go
+		# To get more info about a particular package run:
+		# pkg search -R <name>
+		pkg install --yes git vim curl go lf-26
+		# lf-26 is the Go terminal file manager
 	fi
 
 }
