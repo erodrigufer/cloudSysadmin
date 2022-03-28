@@ -68,10 +68,19 @@ setup_sshd(){
 }
 
 install_webdev_packages(){
-	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!"
+	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!" || return -1
 
 	# Installing mariaDB in FreeBSD:
 	# https://www.osradar.com/how-to-install-mariadb-on-freebsd-12/
+
+	# Enable the mariadb service to start with the system
+	sysrc mysql_enable="yes"
+
+	# Start mariadb service
+	service mysql-server start
+
+	# Run the configuration script
+	/usr/local/bin/mysql_secure_installation
 
 }
 
