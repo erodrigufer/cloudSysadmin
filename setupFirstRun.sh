@@ -88,11 +88,12 @@ install_bare_packages(){
 }
 
 configure_dotfiles(){
+	local REPO_PATH="/dotfiles"
 	# change to home directory
 	cd ${HOME}
-	git clone https://github.com/erodrigufer/dotfiles.git
-	cd ./dotfiles
-	make
+	git clone https://github.com/erodrigufer/dotfiles.git || { rm -fR ${HOME}${REPO_PATH}; print_error "Cloning GitHub dotfiles repo failed!"; exit -1; }
+	cd ${HOME}${REPO_PATH}
+	make || { rm -fR ${HOME}${REPO_PATH}; print_error "Creating symlinks to dotfiles failed!"; exit -1; }
 	
 	# we do not need the zshrc file
 	rm -f ${HOME}/.zshrc
