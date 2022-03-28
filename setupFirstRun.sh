@@ -88,6 +88,11 @@ install_bare_packages(){
 }
 
 configure_dotfiles(){
+	# Install vim-plug to handle plugins
+	# Reference: https://github.com/junegunn/vim-plug
+	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+		    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 	local REPO_PATH="/dotfiles"
 	# change to home directory
 	cd ${HOME}
