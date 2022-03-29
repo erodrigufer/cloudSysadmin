@@ -2,7 +2,9 @@
 
 A compilation of shell scripts to automate setting up VMs in the cloud(s). 
 
-The scripts should be focused on running in FreeBSD and Debian-based distros.
+The scripts should be focused on running on FreeBSD and Debian-based distros.
+
+Properly tested on FreeBSD 13.0
 
 ## Ports
 * [Check open ports on FreeBSD](https://linuxhint.com/check-open-ports-freebsd/)
