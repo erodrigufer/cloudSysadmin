@@ -60,18 +60,10 @@ configure_users(){
 
 }
 
-setup_sshd(){
-	# Disable SSH timeout from the server. The server will not send any 
-	# TCPKeepAlive packages and will only disconnect the client after 2 hours 
-	# of inactivity.
-	# Reference: https://www.simplified.guide/ssh/disable-timeout
-	echo "Done"
-}
-
 install_webdev_packages(){
 	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!" || return -1
 
-	# Installing mariaDB in FreeBSD:
+	# Installing mariaDB on FreeBSD:
 	# https://www.osradar.com/how-to-install-mariadb-on-freebsd-12/
 
 	# Enable the mariadb service to start with the system
@@ -80,7 +72,7 @@ install_webdev_packages(){
 	# Start mariadb service
 	service mysql-server start
 
-	# Run the configuration script
+	# Run the mysql configuration script
 	/usr/local/bin/mysql_secure_installation
 
 }
@@ -136,10 +128,15 @@ configure_ssh(){
 	# Change the configuration of sshd, so that it does not automatically close
 	# after the client has been idle for a while, it will now only disconnect
 	# after 2 hours of inactivity.
+	# - Allow PubKey Authentication
 	# Reference: https://www.simplified.guide/ssh/disable-timeout
 	# (sed) -i: Replace in-place, and append commands with -e
 	# replace everything after and before the pattern with .*
-	sed -i '' -e 's/^.*TCPKeepAlive.*/TCPKeepAlive no/' -e 's/^.*ClientAliveInterval.*/ClientAliveInterval 30/' -e 's/^.*ClientAliveCountMax.*/ClientAliveCountMax 240/' ./sshd_config	
+	sed -i '' -e 's/^.*TCPKeepAlive.*/TCPKeepAlive no/' -e 's/^.*ClientAliveInterval.*/ClientAliveInterval 30/' -e 's/^.*ClientAliveCountMax.*/ClientAliveCountMax 240/' -e 's/^.*PubkeyAuthentication.*/PubkeyAuthentication yes/' ./sshd_config	
+	# Disable SSH timeout from the server. The server will not send any 
+	# TCPKeepAlive packages and will only disconnect the client after 2 hours 
+	# of inactivity.
+	# Reference: https://www.simplified.guide/ssh/disable-timeout
 
 	# Restart sshd with new configuration
 	service sshd restart
