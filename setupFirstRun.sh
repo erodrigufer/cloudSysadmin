@@ -16,6 +16,10 @@ COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'
 
 #########################################################################
+FILE_VM_CREDENTIALS=vm_credentials.secrets # file with ssh credentials for VM
+FILE_NAME=$0 # name of this same file
+PATH_IN_VM="/root/" # where to store setup script in VM
+#########################################################################
 
 # Print an info message to stdout. First parameter is string to be logged
 print_info(){
@@ -143,14 +147,25 @@ configure_ssh(){
 
 }
 
+# Connect through ssh to the remote VM and run all the commands there
+connectVM(){
+	# check if file with ssh secrets for VM exists, if so source file, transfer
+    # script to VM with scp, and run the transferred script inside the VM after 	
+	# establishing an ssh connection
+	# if there is no file with credentials, return, since we are probably 
+	# running the script inside the VM
+	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp ${FILE_NAME} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return
+}
+
 main(){
+	connectVM
 	check_os
 	install_bare_packages	
 	configure_dotfiles
 	configure_ssh
 }
 
-main
+main 
 
 # install lf, golang, git
 # setup vim, setup lf, setup dotfiles (tmux, etc)
