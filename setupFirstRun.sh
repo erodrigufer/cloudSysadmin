@@ -1,13 +1,26 @@
 #!/bin/sh
+# Eduardo Rodriguez [@erodrigufer] 2022 (c) 
+# This script automates setting up a FreeBSD VM in the cloud after it has been
+# successfully spawned.
+# - It configures the ecosystem for development; vim, go, dotfiles in general
+# - It configures sshd to not close a connection so quickly, and accept public
+#	key authentication
+# - It installs common useful packages and, if desired, packages for web dev.
 
-OS=''
 #########################################################################
+#User-defined input parameters
+
 MAIN_USER="hap"
+
+# Package naming used by FreeBSD pkg
 # lf-26 is the Go terminal file manager
 PACKAGES2INSTALL="git vim curl go lf-26"
 # hey is used to send load to web applications
 WEBDEVPACKAGES="mariadb105-server-10.5.15 hey-0.1.4_1"
 #########################################################################
+# Internal global variables, which should not be modified by user
+
+OS=''
 # Colors for the text (they do not set the background color)
 COLOR_GREEN='\e[0;32m'
 NO_COLOR='\033[0m'
@@ -16,10 +29,15 @@ COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'
 
 #########################################################################
+# Internal global variables, which can be modified by user
+
 FILE_VM_CREDENTIALS=vm_credentials.secrets # file with ssh credentials for VM
 FILE_NAME=$0 # name of this same file
-PATH_IN_VM="/root/" # where to store setup script in VM
+PATH_IN_VM="/root/" # where to store setup script in VM, from which it is then
+					# run inside the VM after establishing ssh connection
+
 #########################################################################
+# Helper functions
 
 # Print an info message to stdout. First parameter is string to be logged
 print_info(){
@@ -31,6 +49,8 @@ print_info(){
 print_error(){
 	printf "[${COLOR_RED}ERROR${NO_COLOR}] $1\n"
 }
+
+#########################################################################
 
 # Check if the script is running in a valid OS (eventual support should be for
 # primary FreeBSD and Ubuntu)
@@ -167,5 +187,4 @@ main(){
 
 main 
 
-# install lf, golang, git
 # setup vim, setup lf, setup dotfiles (tmux, etc)
