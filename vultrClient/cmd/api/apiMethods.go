@@ -46,10 +46,10 @@ func (app *application) createInstance(newInstance *Instance) {
 		app.errorLog.Fatal("request creation failed")
 	}
 
-	// Format token value for header
+	// Format token value for header. Add 'Bearer' before token
 	tokenValue := fmt.Sprint("Bearer ", app.cfg.tokenAPI)
-	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", tokenValue)
+	req.Header.Add("Content-Type", "application/json")
 
 	// Print req to stdout
 	// req.Write(os.Stdout)
