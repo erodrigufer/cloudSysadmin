@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 )
@@ -30,7 +31,7 @@ func (app *application) createInstance(newInstance *Instance) {
 	//fmt.Println(newInstance.Region)
 	//app.infoLog.Println("%s", app.cfg.tokenAPI)
 
-	//client := &http.Client
+	//	client := &http.Client
 
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
@@ -41,5 +42,13 @@ func (app *application) createInstance(newInstance *Instance) {
 	}
 
 	req, err := http.NewRequest("POST", VultrAPI, buf)
+	if err != nil {
+		app.errorLog.Fatal("request creation failed")
+	}
+
+	// Format token value for header
+	tokenValue := fmt.Sprint("Bearer ", app.cfg.tokenAPI)
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", tokenValue)
 	req.Write(os.Stdout)
 }
