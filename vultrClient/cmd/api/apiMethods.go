@@ -31,7 +31,7 @@ func (app *application) createInstance(newInstance *Instance) {
 	//fmt.Println(newInstance.Region)
 	//app.infoLog.Println("%s", app.cfg.tokenAPI)
 
-	//	client := &http.Client
+	client := new(http.Client)
 
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
@@ -50,5 +50,17 @@ func (app *application) createInstance(newInstance *Instance) {
 	tokenValue := fmt.Sprint("Bearer ", app.cfg.tokenAPI)
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", tokenValue)
-	req.Write(os.Stdout)
+
+	// Print req to stdout
+	// req.Write(os.Stdout)
+
+	// Send request to Vultr API
+	resp, err := client.Do(req)
+	defer resp.Body.Close()
+	if err != nil {
+		app.errorLog.Fatal("client send request failed")
+	}
+	//	body, err := io.ReadAll(resp.Body)
+	resp.Write(os.Stdout)
+
 }
