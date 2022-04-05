@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 )
@@ -22,6 +23,38 @@ type Instance struct {
 	Backups  string `json:"backups"` // disabled (no backups)
 	// with backups is more expensive
 }
+
+//type InstanceCreated struct {
+//ID string "id": "4f0f12e5-1f84-404f-aa84-85f431ea5ec2",
+//"os": "CentOS 8 Stream",
+//"ram": 1024,
+//"disk": 0,
+//"main_ip": "0.0.0.0",
+//"vcpu_count": 1,
+//"region": "ewr",
+//"plan": "vc2-1c-1gb",
+//"date_created": "2021-09-14T13:22:20+00:00",
+//"status": "pending",
+//"allowed_bandwidth": 1000,
+//"netmask_v4": "",
+//"gateway_v4": "0.0.0.0",
+//"power_status": "running",
+//"server_status": "none",
+//"v6_network": "",
+//"v6_main_ip": "",
+//"v6_network_size": 0,
+//"label": "",
+//"internal_ip": "",
+//"kvm": "",
+//"hostname": "my_hostname",
+//"tag": "",
+//"os_id": 401,
+//"app_id": 0,
+//"image_id": "",
+//"firewall_group_id": "",
+//"features": [],
+//Password string "default_password": "v5{Fkvb#2ycPGwHs"
+//}
 
 // Create an Instance with the given plan in the specified regions
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
@@ -64,7 +97,11 @@ func (app *application) createInstance(newInstance *Instance) {
 	if resp.Status != http.StatusAccepted {
 		app.errorLog.Println("server did not accept request. Response status: ", resp.Status)
 	}
-	//	body, err := io.ReadAll(resp.Body)
-	resp.Write(os.Stdout)
 
+	resp.Write(os.Stdout)
+	body, err := io.ReadAll(resp.Body)
+
+	responseDecoded := new(InstanceCreated)
+	// decode response into JSON
+	err = json.Unmarshal(body, responseDecoded)
 }
