@@ -47,7 +47,7 @@ func main() {
 
 	newInstance := &Instance{
 		OS_id:   447,   // FreeBSD-13
-		Region:  "ewr", // New Jersey
+		Region:  "fra", // New Jersey (ewr) Frankfurt (fra)
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
 		Plan: "vc2-1c-1gb",
