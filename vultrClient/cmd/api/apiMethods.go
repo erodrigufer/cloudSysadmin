@@ -58,7 +58,11 @@ func (app *application) createInstance(newInstance *Instance) {
 	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		app.errorLog.Fatal("client send request failed")
+		app.errorLog.Println("client send request failed")
+	}
+	// if everything went well Vultr API responds with 202 (Status Accepted)
+	if resp.Status != http.StatusAccepted {
+		app.errorLog.Println("server did not accept request. Response status: ", resp.Status)
 	}
 	//	body, err := io.ReadAll(resp.Body)
 	resp.Write(os.Stdout)
