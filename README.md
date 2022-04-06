@@ -12,6 +12,8 @@ If an ssh key is automatically installed in the server at deployment, to use it 
 1. `ssh-add` : add key to keys agent
 2. `ssh -i <path_of_key> root@<IP_address>` : explicitly state where the file with the key is located
 
+* Reference: [Vultr Docs - ssh keys](https://www.vultr.com/docs/connect-to-a-server-using-an-ssh-key)
+
 # FreeBSD: General information
 ## Networking
 * [Check open ports on FreeBSD](https://linuxhint.com/check-open-ports-freebsd/): _sockstat_ command
