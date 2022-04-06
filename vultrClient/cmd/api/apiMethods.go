@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 // URL of Vultr API
@@ -24,37 +25,38 @@ type Instance struct {
 	// with backups is more expensive
 }
 
-//type InstanceCreated struct {
-//ID string "id": "4f0f12e5-1f84-404f-aa84-85f431ea5ec2",
-//"os": "CentOS 8 Stream",
-//"ram": 1024,
-//"disk": 0,
-//"main_ip": "0.0.0.0",
-//"vcpu_count": 1,
-//"region": "ewr",
-//"plan": "vc2-1c-1gb",
-//"date_created": "2021-09-14T13:22:20+00:00",
-//"status": "pending",
-//"allowed_bandwidth": 1000,
-//"netmask_v4": "",
-//"gateway_v4": "0.0.0.0",
-//"power_status": "running",
-//"server_status": "none",
-//"v6_network": "",
-//"v6_main_ip": "",
-//"v6_network_size": 0,
-//"label": "",
-//"internal_ip": "",
-//"kvm": "",
-//"hostname": "my_hostname",
-//"tag": "",
-//"os_id": 401,
-//"app_id": 0,
-//"image_id": "",
-//"firewall_group_id": "",
-//"features": [],
-//Password string "default_password": "v5{Fkvb#2ycPGwHs"
-//}
+// type info received from response after creating instance
+type InstanceCreated struct {
+	ID               string    `json:"id"`
+	OS               string    `json:"os"`
+	RAM              int       `json:"ram"`
+	Disk             int       `json:"disk"`
+	MainIP           string    `json:"main_ip"`
+	VCPUCount        int       `json:"vcpu_count"`
+	Region           string    `json:"region"`
+	Plan             string    `json:"plan"`
+	CreationDate     time.Time `json:"date_created"`
+	Status           string    `json:"status"`
+	AllowedBandwidth int       `json:"allowed_bandwidth"`
+	NetmaskV4        string    `json:"netmask_v4"`
+	GatewayV4        string    `json:"gateway_v4"`
+	PowerStatus      string    `json:"power_status"`
+	ServerStatus     string    `json:"server_status"`
+	V6Network        string    `json:"v6_network"`
+	V6MainIP         string    `json:"v6_main_ip"`
+	V6NetworkSize    int       `json:"v6_network_size"`
+	Label            string    `json:"label"`
+	InternalIP       string    `json:"internal_ip"`
+	KVM              string    `json:"kvm"`
+	Hostname         string    `json:"hostname"`
+	Tag              string    `json:"tag"`
+	OS_id            int       `json:"os_id"`
+	App_id           int       `json:"app_id"`
+	Image_id         string    `json:"image_id"`
+	FirewallGroupID  string    `json:"firewall_group_id"`
+	Features         []string  `json:"features"`
+	DefaultPassword  string    `json:"default_password"`
+}
 
 // Create an Instance with the given plan in the specified regions
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
