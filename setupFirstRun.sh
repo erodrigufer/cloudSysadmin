@@ -63,8 +63,9 @@ check_os(){
 		# otherwise all these characters must be escaped with the normal regex 
 		# grammar of grep
 		lsb_release -i | grep -i -E "(ubuntu|debian|kali)" || { print_error "System must be debian-based to run script."; exit -1 ; }
+		print_error "{$(uname)} System not supported!"	
 		OS="debian"
-		return
+		exit -1
 	fi
 	if [ $(uname) = "FreeBSD" ]; then
 		OS="freebsd"
@@ -97,7 +98,7 @@ install_webdev_packages(){
 	service mysql-server start
 
 	# Run the mysql configuration script
-	/usr/local/bin/mysql_secure_installation
+	# /usr/local/bin/mysql_secure_installation
 
 }
 
