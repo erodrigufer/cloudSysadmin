@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -23,6 +21,10 @@ type Instance struct {
 	Plan     string `json:"plan"`
 	Backups  string `json:"backups"` // disabled (no backups)
 	// with backups is more expensive
+}
+
+type InstanceHack struct {
+	Instance InstanceCreated `json:"instance"`
 }
 
 // type info received from response after creating instance
@@ -96,14 +98,21 @@ func (app *application) createInstance(newInstance *Instance) {
 		app.errorLog.Println("client send request failed")
 	}
 	// if everything went well Vultr API responds with 202 (Status Accepted)
-	if resp.Status != http.StatusAccepted {
+	if resp.StatusCode != http.StatusAccepted {
 		app.errorLog.Println("server did not accept request. Response status: ", resp.Status)
+		return
 	}
 
-	resp.Write(os.Stdout)
-	body, err := io.ReadAll(resp.Body)
+	//resp.Write(os.Stdout)
+	//body, err := io.ReadAll(resp.Body)
 
-	responseDecoded := new(InstanceCreated)
+	responseDecoded := new(InstanceHack)
 	// decode response into JSON
-	err = json.Unmarshal(body, responseDecoded)
+	err = json.NewDecoder(resp.Body).Decode(responseDecoded)
+	if err != nil {
+		app.errorLog.Println("error decoding json response")
+		return
+	}
+	fmt.Printf("%+v\n", responseDecoded)
+	fmt.Println("New instance's ID: ", responseDecoded.Instance.ID)
 }
