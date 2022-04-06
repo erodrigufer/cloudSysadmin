@@ -14,9 +14,9 @@ MAIN_USER="hap"
 
 # Package naming used by FreeBSD pkg
 # lf-26 is the Go terminal file manager
-PACKAGES2INSTALL="git vim curl go lf-26"
+PACKAGES2INSTALL="git vim curl go lf"
 # hey is used to send load to web applications
-WEBDEVPACKAGES="mariadb105-server-10.5.15 hey-0.1.4_1"
+WEBDEVPACKAGES="mariadb105-server hey"
 #########################################################################
 # Internal global variables, which should not be modified by user
 
@@ -112,9 +112,9 @@ install_bare_packages(){
 		# For more information take a look at 'man pkg-install'
 		# To get more info about a particular package run:
 		# pkg search -R <name>
-		pkg install --yes ${PACKAGES2INSTALL} && print_info "${PACKAGES2INSTALL} were successfully installed!" || { print_error "Packages installation failed!"; exit -1; }
+		pkg install --yes ${PACKAGES2INSTALL} && print_info "${PACKAGES2INSTALL} were successfully installed!" || { print_error "Packages installation failed!"; }
 		
-		install_webdev_packages  || { print_error "Webdev packages installation failed!"; exit -1; }
+		install_webdev_packages  || { print_error "Webdev packages installation failed!"; }
 
 		return
 	fi
