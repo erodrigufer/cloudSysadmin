@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// URL of Vultr API
+// URL of Vultr API v2
 const VultrAPI = "https://api.vultr.com/v2/instances"
 
 type Instance struct {
@@ -60,7 +60,7 @@ type InstanceCreated struct {
 	DefaultPassword  string    `json:"default_password"`
 }
 
-// Create an Instance with the given plan in the specified regions
+// Create an Instance with the given plan in the specified regions,
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
 // Additionally, use a label and a hostname for the new instance
 func (app *application) createInstance(newInstance *Instance) {
