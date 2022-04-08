@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -24,7 +25,7 @@ type Instance struct {
 }
 
 type InstanceHack struct {
-	Instance InstanceCreated `json:"instance"`
+	Instance *InstanceCreated `json:"instance"`
 }
 
 // type info received from response after creating instance
@@ -60,27 +61,30 @@ type InstanceCreated struct {
 	DefaultPassword  string    `json:"default_password"`
 }
 
+type SSHKey struct {
+	ID           string    `json:"id"`
+	CreationDate time.Time `json:"date_created"`
+	Name         string    `json:"name"`
+	SSH_Key      string    `json:"ssh_key"`
+}
+
 // Create an Instance with the given plan in the specified regions,
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
 // Additionally, use a label and a hostname for the new instance
-func (app *application) createInstance(newInstance *Instance) {
-	// Validate input parameters, plans
-	//fmt.Println(newInstance.Region)
-	//app.infoLog.Println("%s", app.cfg.tokenAPI)
-
-	client := new(http.Client)
+func (app *application) createInstance(newInstance *Instance) (*InstanceCreated, error) {
+	// TODO: Validate input parameters?
 
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
 	// Encode the data to JSON
 	err := json.NewEncoder(buf).Encode(newInstance)
 	if err != nil {
-		app.errorLog.Fatal("json encoding failed")
+		return nil, err
 	}
 
 	req, err := http.NewRequest("POST", VultrAPI, buf)
 	if err != nil {
-		app.errorLog.Fatal("request creation failed")
+		return nil, err
 	}
 
 	// Format token value for header. Add 'Bearer' before token
@@ -92,27 +96,32 @@ func (app *application) createInstance(newInstance *Instance) {
 	// req.Write(os.Stdout)
 
 	// Send request to Vultr API
-	resp, err := client.Do(req)
+	resp, err := app.client.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		app.errorLog.Println("client send request failed")
+		return nil, err
 	}
 	// if everything went well Vultr API responds with 202 (Status Accepted)
 	if resp.StatusCode != http.StatusAccepted {
-		app.errorLog.Println("server did not accept request. Response status: ", resp.Status)
-		return
+		// TODO: I am not sure if this implementation is idiomatic and correct
+		errorMessage := fmt.Sprintf("server did not accept request. Response status: %s", resp.Status)
+		err = errors.New(errorMessage)
+		return nil, err
 	}
 
 	//resp.Write(os.Stdout)
 	//body, err := io.ReadAll(resp.Body)
 
-	responseDecoded := new(InstanceHack)
+	createdInstance := new(InstanceHack)
 	// decode response into JSON
-	err = json.NewDecoder(resp.Body).Decode(responseDecoded)
+	err = json.NewDecoder(resp.Body).Decode(createdInstance)
 	if err != nil {
-		app.errorLog.Println("error decoding json response")
-		return
+		return nil, err
 	}
-	fmt.Printf("%+v\n", responseDecoded)
-	fmt.Println("New instance's ID: ", responseDecoded.Instance.ID)
+	return createdInstance.Instance, nil
+}
+
+// List all SSH Keys registered to a particular Vultr account
+func (app *application) listSSHKeys() string {
+	return "mock SSH keys"
 }

@@ -4,7 +4,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -13,6 +15,7 @@ type application struct {
 	errorLog *log.Logger   // error log handler
 	infoLog  *log.Logger   // info log handler
 	cfg      *configValues // config values (e.g. from flags)
+	client   *http.Client
 }
 
 // store all flag-parseable config values in this struct
@@ -42,8 +45,14 @@ func main() {
 		app.errorLog.Fatal("missing API token")
 	}
 
-	// Config values are valid
 	app.cfg = cfg
+
+	// Use a single http.Client for all interactions with the API, as stated in
+	// the official Go documentation "The Client's Transport typically has
+	// internal state (cached TCP connections), so Clients should be reused
+	// instead of created as needed. Clients are safe for concurrent use by
+	// multiple goroutines."
+	app.client = new(http.Client)
 
 	newInstance := &Instance{
 		OS_id:   447,   // FreeBSD-13
@@ -53,5 +62,13 @@ func main() {
 		Plan: "vc2-1c-1gb",
 	}
 
-	app.createInstance(newInstance)
+	createdInstance, err := app.createInstance(newInstance)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	fmt.Printf("%+v\n", createdInstance)
+	fmt.Println("New instance's ID: ", createdInstance.ID)
+
+	fmt.Println(app.listSSHKeys)
 }
