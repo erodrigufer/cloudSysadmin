@@ -87,10 +87,7 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 		return nil, err
 	}
 
-	// Format token value for header. Add 'Bearer' before token
-	tokenValue := fmt.Sprint("Bearer ", app.cfg.tokenAPI)
-	req.Header.Add("Authorization", tokenValue)
-	req.Header.Add("Content-Type", "application/json")
+	app.addAuthToken(req)
 
 	// Print req to stdout
 	// req.Write(os.Stdout)
