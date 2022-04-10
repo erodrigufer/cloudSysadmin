@@ -100,7 +100,6 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 	}
 	// if everything went well Vultr API responds with 202 (Status Accepted)
 	if resp.StatusCode != http.StatusAccepted {
-		// TODO: I am not sure if this implementation is idiomatic and correct
 		errorMessage := fmt.Sprintf("server did not accept request. Response status: %s", resp.Status)
 		err = errors.New(errorMessage)
 		return nil, err
@@ -119,6 +118,16 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 }
 
 // List all SSH Keys registered to a particular Vultr account
-func (app *application) listSSHKeys() string {
+func (app *application) listSSHKeys() (*SSHKey, error) {
+	req, err := http.NewRequest("GET", VultrAPI, nil)
+	app.addAuthToken(req)
+
+	// Send requesto to Vultr API
+	resp, err := app.client.Do(req)
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
 	return "mock SSH keys"
 }
