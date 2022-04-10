@@ -10,8 +10,6 @@ import (
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
 // Additionally, use a label and a hostname for the new instance
 func (app *application) createInstance(newInstance *Instance) (*InstanceCreated, error) {
-	// TODO: Validate input parameters?
-
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
 	// Encode the data to JSON
@@ -28,9 +26,6 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 
 	app.addAuthToken(req)
 
-	// Print req to stdout
-	// req.Write(os.Stdout)
-
 	// Send request to Vultr API
 	resp, err := app.client.Do(req)
 	defer resp.Body.Close()
@@ -42,9 +37,6 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 	if err = checkResponseAPI(resp, http.StatusAccepted); err != nil {
 		return nil, err
 	}
-
-	//resp.Write(os.Stdout)
-	//body, err := io.ReadAll(resp.Body)
 
 	createdInstance := new(InstanceHack)
 	// decode response into JSON
