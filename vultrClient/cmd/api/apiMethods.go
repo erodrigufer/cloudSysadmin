@@ -9,7 +9,7 @@ import (
 // Create an Instance with the given plan in the specified regions,
 // e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
 // Additionally, use a label and a hostname for the new instance
-func (app *application) createInstance(newInstance *Instance) (*InstanceCreated, error) {
+func (app *application) createInstance(newInstance *RequestCreateInstance) (*CreatedInstance, error) {
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
 	// Encode the data to JSON
@@ -38,13 +38,15 @@ func (app *application) createInstance(newInstance *Instance) (*InstanceCreated,
 		return nil, err
 	}
 
-	createdInstance := new(InstanceHack)
+	responseJSON := new(ResponseCreateInstance)
 	// decode response into JSON
-	err = json.NewDecoder(resp.Body).Decode(createdInstance)
+	err = json.NewDecoder(resp.Body).Decode(responseJSON)
 	if err != nil {
 		return nil, err
 	}
-	return createdInstance.Instance, nil
+	// since the json response encapsulates the actual instance information,
+	// inside an instance object, we have to return only this object
+	return responseJSON.Instance, nil
 }
 
 // List all SSH Keys registered to a particular Vultr account
@@ -53,7 +55,7 @@ func (app *application) listSSHKeys() ([]SSHKey, error) {
 	req, err := http.NewRequest("GET", sshkeysVultrAPI, nil)
 	app.addAuthToken(req)
 
-	// Send requesto to Vultr API
+	// Send request to Vultr API
 	resp, err := app.client.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
@@ -64,7 +66,7 @@ func (app *application) listSSHKeys() ([]SSHKey, error) {
 		return nil, err
 	}
 
-	responseJson := new(ResponseSSHKeys)
+	responseJson := new(ResponseListSSHKeys)
 	err = json.NewDecoder(resp.Body).Decode(responseJson)
 	if err != nil {
 		return nil, err

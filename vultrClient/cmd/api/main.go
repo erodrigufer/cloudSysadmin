@@ -54,21 +54,21 @@ func main() {
 	// multiple goroutines."
 	app.client = new(http.Client)
 
-	//	newInstance := &Instance{
-	//		OS_id:   447,   // FreeBSD-13
-	//		Region:  "fra", // New Jersey (ewr) Frankfurt (fra)
-	//		Backups: "disabled",
-	//		// Enabling backups makes the VM more expensive
-	//		Plan: "vc2-1c-1gb",
-	//	}
+	newInstance := &RequestCreateInstance{
+		OS_id:   447,   // FreeBSD-13
+		Region:  "ewr", // New Jersey (ewr) Frankfurt (fra)
+		Backups: "disabled",
+		// Enabling backups makes the VM more expensive
+		Plan: "vc2-1c-1gb",
+	}
 
-	//	createdInstance, err := app.createInstance(newInstance)
-	//	if err != nil {
-	//		app.errorLog.Println(err)
-	//		return
-	//	}
-	//	fmt.Printf("%+v\n", createdInstance)
-	//	fmt.Println("New instance's ID: ", createdInstance.ID)
+	createdInstance, err := app.createInstance(newInstance)
+	if err != nil {
+		app.errorLog.Println(err)
+		return
+	}
+	fmt.Printf("%+v\n", createdInstance)
+	fmt.Println("New instance's ID: ", createdInstance.ID)
 
 	keys, err := app.listSSHKeys()
 	if err != nil {

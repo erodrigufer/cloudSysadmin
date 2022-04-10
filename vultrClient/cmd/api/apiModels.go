@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type Instance struct {
+// Info to request the creation of a new instance
+type RequestCreateInstance struct {
 	// omitempty= if value is not present, omit at encoding
 	ID       string `json:"id,omitempty"`
 	OS_id    int    `json:"os_id"`
@@ -17,12 +18,12 @@ type Instance struct {
 	// with backups is more expensive
 }
 
-type InstanceHack struct {
-	Instance *InstanceCreated `json:"instance"`
+// Info received from response after creating instance
+type ResponseCreateInstance struct {
+	Instance *CreatedInstance `json:"instance"`
 }
 
-// type info received from response after creating instance
-type InstanceCreated struct {
+type CreatedInstance struct {
 	ID               string    `json:"id"`
 	OS               string    `json:"os"`
 	RAM              int       `json:"ram"`
@@ -61,7 +62,7 @@ type SSHKey struct {
 	SSH_Pub_Key  string    `json:"ssh_key"`
 }
 
-type ResponseSSHKeys struct {
+type ResponseListSSHKeys struct {
 	SSHKeys []SSHKey `json:"ssh_keys"` // slice of ssh keys
 	Meta    struct {
 		TotalKeys int `json:"total"` // total amount of ssh keys
