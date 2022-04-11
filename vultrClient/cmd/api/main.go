@@ -90,10 +90,10 @@ func main() {
 	fmt.Printf("%+v\n", createdInstance)
 	fmt.Println("New instance's ID: ", createdInstance.ID)
 
-	keys, err := app.listSSHKeys()
-	if err != nil {
-		app.errorLog.Println(err)
-		return
-	}
-	fmt.Printf("SSH Keys: %+v\n", keys)
+	//keys, err := app.listSSHKeys()
+	//if err != nil {
+	//	app.errorLog.Println(err)
+	//	return
+	//}
+	//fmt.Printf("SSH Keys: %+v\n", keys)
 }
