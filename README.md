@@ -1,10 +1,8 @@
 # cloudSysadmin
 
-A compilation of shell scripts to automate setting up VMs in the cloud(s) (Vultr). 
+A Go program (client) and shell script to automate setting up VMs in the cloud(s) [Vultr]. 
 
-The scripts should be focused on running on FreeBSD. 
-
-Properly tested on FreeBSD 13.0
+The scripts should be focused on running on FreeBSD. Properly tested on **FreeBSD 13.0**
 
 ## Configuration
 ### ssh Keys
