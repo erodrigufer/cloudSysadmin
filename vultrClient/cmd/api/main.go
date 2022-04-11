@@ -12,15 +12,22 @@ import (
 
 // application type used for dependency injection / avoid using globals
 type application struct {
-	errorLog *log.Logger   // error log handler
-	infoLog  *log.Logger   // info log handler
-	cfg      *configValues // config values (e.g. from flags)
-	client   *http.Client
+	// errorLog, error log handler
+	errorLog *log.Logger
+	// infoLog, info log handler
+	infoLog *log.Logger
+	// cfg, config values (e.g. from flags)
+	cfg *configValues
+	// client, long-living http client used to communicate with API
+	client *http.Client
 }
 
 // store all flag-parseable config values in this struct
 type configValues struct {
-	tokenAPI string // API token used to communicate with Vultr API
+	// tokenAPI, API token used to communicate with Vultr API
+	tokenAPI string
+	// sshkey, ssh key which will be automatically initialized in new instance
+	sshkey string
 }
 
 func main() {
@@ -39,9 +46,10 @@ func main() {
 	}
 
 	cfg := new(configValues)
-	flag.StringVar(&cfg.tokenAPI, "tokenAPI", "-", "Personal Access Token to interact with Vultr API")
+	flag.StringVar(&cfg.tokenAPI, "tokenAPI", "", "Personal Access Token to interact with Vultr API")
+	flag.StringVar(&cfg.sshkey, "SSHkey", "", "SSH key to initialize per default in new instance")
 	flag.Parse()
-	if cfg.tokenAPI == "-" {
+	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
 	}
 
@@ -55,12 +63,16 @@ func main() {
 	app.client = new(http.Client)
 
 	newInstance := &RequestCreateInstance{
-		OS_id:   447,   // FreeBSD-13
+		OS_ID:   447,   // FreeBSD-13
 		Region:  "ewr", // New Jersey (ewr) Frankfurt (fra)
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
 		Plan: "vc2-1c-1gb",
 	}
+
+	// Append ssh key parsed from flags, if no ssh key was parsed an empty
+	// string is appended
+	newInstance.SSHKeys = append(newInstance.SSHKeys, app.cfg.sshkey)
 
 	createdInstance, err := app.createInstance(newInstance)
 	if err != nil {

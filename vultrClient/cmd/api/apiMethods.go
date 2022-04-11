@@ -18,8 +18,8 @@ func (app *application) createInstance(newInstance *RequestCreateInstance) (*Cre
 		return nil, err
 	}
 
-	instancesVultrAPI := "https://api.vultr.com/v2/instances"
-	req, err := http.NewRequest("POST", instancesVultrAPI, buf)
+	URLInstancesVultrAPI := "https://api.vultr.com/v2/instances"
+	req, err := http.NewRequest("POST", URLInstancesVultrAPI, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -51,8 +51,8 @@ func (app *application) createInstance(newInstance *RequestCreateInstance) (*Cre
 
 // List all SSH Keys registered to a particular Vultr account
 func (app *application) listSSHKeys() ([]SSHKey, error) {
-	sshkeysVultrAPI := "https://api.vultr.com/v2/ssh-keys"
-	req, err := http.NewRequest("GET", sshkeysVultrAPI, nil)
+	URLSSHKeysVultrAPI := "https://api.vultr.com/v2/ssh-keys"
+	req, err := http.NewRequest("GET", URLSSHKeysVultrAPI, nil)
 	app.addAuthToken(req)
 
 	// Send request to Vultr API

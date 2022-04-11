@@ -6,15 +6,17 @@ import (
 )
 
 // RequestCreateInstance has the info necessary to request the creation of a
-// new instance
+// new instance. If a value has the omitempty tag, then it is not strictly
+// required to request the creation of a new instance.
 type RequestCreateInstance struct {
-	ID       string `json:"id,omitempty"` // omitempty= if value is not present, omit at encoding
-	OS_id    int    `json:"os_id"`
+	OS_ID    int    `json:"os_id"`
 	Label    string `json:"label,omitempty"`
 	Hostname string `json:"hostname,omitempty"`
 	Region   string `json:"region"`
 	Plan     string `json:"plan"`
-	Backups  string `json:"backups"` // disabled (no backups)
+	// Backups [enabled|disabled] automatic backups for the new instance.
+	// Enabling automatic backups makes the instance more expensive..
+	Backups string `json:"backups,omitempty"`
 	// SSHKeys is a slice with the IDs of the SSH keys that should be used per
 	// default when initializing the newly requested instance
 	SSHKeys []string `json:"sshkey_id,omitempty"`
