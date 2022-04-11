@@ -28,6 +28,10 @@ type configValues struct {
 	tokenAPI string
 	// sshkey, ssh key which will be automatically initialized in new instance
 	sshkey string
+	// hostname, hostname for new instance
+	hostname string
+	// label, label for new instance
+	label string
 }
 
 func main() {
@@ -47,7 +51,9 @@ func main() {
 
 	cfg := new(configValues)
 	flag.StringVar(&cfg.tokenAPI, "tokenAPI", "", "Personal Access Token to interact with Vultr API")
-	flag.StringVar(&cfg.sshkey, "SSHkey", "", "SSH key to initialize per default in new instance")
+	flag.StringVar(&cfg.sshkey, "sshKey", "", "SSH key to initialize per default in new instance")
+	flag.StringVar(&cfg.hostname, "hostname", "", "Hostname for new instance")
+	flag.StringVar(&cfg.label, "label", "", "Label for new instance")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
@@ -67,7 +73,9 @@ func main() {
 		Region:  "ewr", // New Jersey (ewr) Frankfurt (fra)
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
-		Plan: "vc2-1c-1gb",
+		Plan:     "vc2-1c-1gb",
+		Hostname: app.cfg.hostname,
+		Label:    app.cfg.label,
 	}
 
 	// Append ssh key parsed from flags, if no ssh key was parsed an empty
