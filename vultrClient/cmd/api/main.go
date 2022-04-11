@@ -86,7 +86,7 @@ func main() {
 		app.errorLog.Println(err)
 		return
 	}
-	app.infoLog.Printf("new instance [ID: %d] created.", createdInstance.ID)
+	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
 
 	//fmt.Printf("%+v\n", createdInstance)
 	//fmt.Println("New instance's ID: ", createdInstance.ID)
