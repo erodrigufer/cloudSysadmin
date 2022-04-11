@@ -31,6 +31,8 @@ type configValues struct {
 	hostname string
 	// label, label for new instance
 	label string
+	// region, region where to deplay VM
+	region string
 }
 
 func main() {
@@ -53,6 +55,7 @@ func main() {
 	flag.StringVar(&cfg.sshkey, "sshKey", "", "SSH key to initialize per default in new instance")
 	flag.StringVar(&cfg.hostname, "hostname", "", "Hostname for new instance")
 	flag.StringVar(&cfg.label, "label", "", "Label for new instance")
+	flag.StringVar(&cfg.region, "region", "fra", "Region where to deply VM")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
@@ -68,8 +71,8 @@ func main() {
 	app.client = new(http.Client)
 
 	newInstance := &RequestCreateInstance{
-		OS_ID:   447,   // FreeBSD-13
-		Region:  "ewr", // New Jersey (ewr) Frankfurt (fra)
+		OS_ID:   447,            // FreeBSD-13
+		Region:  app.cfg.region, // New Jersey (ewr) Frankfurt (fra)
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
 		Plan:     "vc2-1c-1gb",
