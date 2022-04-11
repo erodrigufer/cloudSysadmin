@@ -138,6 +138,9 @@ configure_dotfiles(){
 	git clone https://github.com/erodrigufer/dotfiles.git || { rm -fR ${HOME}${REPO_PATH}; print_error "Cloning GitHub dotfiles repo failed!"; exit -1; }
 	cd ${HOME}${REPO_PATH}
 	make || { rm -fR ${HOME}${REPO_PATH}; print_error "Creating symlinks to dotfiles failed!"; exit -1; }
+
+	# Install vim plugins in the background
+	vim -E -s +PlugInstall +qall
 	
 	# we do not need the zshrc file
 	rm -f ${HOME}/.zshrc
