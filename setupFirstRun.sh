@@ -28,6 +28,8 @@ COLOR_RED='\033[0;31m'
 COLOR_MAGENTA='\033[0;35m'
 COLOR_CYAN='\033[0;36m'
 
+SSHD_CONFIG_FILE="./etc/sshd_config"
+
 #########################################################################
 # Internal global variables, which can be modified by user
 
@@ -86,7 +88,7 @@ configure_users(){
 }
 
 install_webdev_packages(){
-	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!" || return -1
+	pkg install --yes ${WEBDEVPACKAGES} && print_info "${WEBDEVPACKAGES} were successfully installed!" || { print_error "Webdev packages installation failed!"; return; }
 
 	# Installing mariaDB on FreeBSD:
 	# https://www.osradar.com/how-to-install-mariadb-on-freebsd-12/
@@ -114,8 +116,6 @@ install_bare_packages(){
 		# pkg search -R <name>
 		pkg install --yes ${PACKAGES2INSTALL} && print_info "${PACKAGES2INSTALL} were successfully installed!" || { print_error "Packages installation failed!"; }
 		
-		install_webdev_packages  || { print_error "Webdev packages installation failed!"; }
-
 		return
 	fi
 
@@ -146,9 +146,11 @@ configure_dotfiles(){
 
 # Configure sshd properly, do not disconnect client after short idle time
 configure_ssh(){
-	cd /etc/ssh
-	# Create a copy of the sshd original configuration, before changing it
-	cp ./sshd_config ./sshd_config.bak
+	# Create a copy (backup) of the sshd original configuration, before changing it
+	cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+
+	# Replace original file with new config file
+	cp ${PATH_IN_VM}sshd_config /etc/ssh/sshd_config
 
 	# Change the configuration of sshd, so that it does not automatically close
 	# after the client has been idle for a while, it will now only disconnect
@@ -157,11 +159,18 @@ configure_ssh(){
 	# Reference: https://www.simplified.guide/ssh/disable-timeout
 	# (sed) -i: Replace in-place, and append commands with -e
 	# replace everything after and before the pattern with .*
-	sed -i '' -e 's/^.*TCPKeepAlive.*/TCPKeepAlive no/' -e 's/^.*ClientAliveInterval.*/ClientAliveInterval 30/' -e 's/^.*ClientAliveCountMax.*/ClientAliveCountMax 240/' -e 's/^.*PubkeyAuthentication.*/PubkeyAuthentication yes/' ./sshd_config	
+	# sed -i '' -e 's/^#TCPKeepAlive.*/TCPKeepAlive no/' -e 's/^#ClientAliveInterval.*/ClientAliveInterval 30/' -e 's/^#ClientAliveCountMax.*/ClientAliveCountMax 240/' -e 's/^#PubkeyAuthentication.*/PubkeyAuthentication yes/' ./sshd_config	
 	# Disable SSH timeout from the server. The server will not send any 
 	# TCPKeepAlive packages and will only disconnect the client after 2 hours 
 	# of inactivity.
 	# Reference: https://www.simplified.guide/ssh/disable-timeout
+
+	# Disable password authentication
+	# In the default file from Vultr, there is an uncommented instance of 
+	# PasswordAuthentication
+	# sed -i '' -e 's/^PasswordAuthentication.*/PasswordAuthentication no/' -e 's/^#PasswordAuthentication.*/PasswordAuthentication no/' -e 's/^#ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/' ./sshd_config
+	# If it is commented out
+	# sed -i '' -e 's/^#PasswordAuthentication.*/PasswordAuthentication no/' ./sshd_config
 
 	# Restart sshd with new configuration
 	service sshd restart
@@ -175,17 +184,16 @@ connectVM(){
 	# establishing an ssh connection
 	# if there is no file with credentials, return, since we are probably 
 	# running the script inside the VM
-	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp ${FILE_NAME} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return
+	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp ${FILE_NAME} ${SSHD_CONFIG_FILE} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return
 }
 
 main(){
 	connectVM
 	check_os
 	install_bare_packages	
+	#install_webdev_packages
 	configure_dotfiles
 	configure_ssh
 }
 
 main 
-
-# setup vim, setup lf, setup dotfiles (tmux, etc)
