@@ -6,9 +6,10 @@ import (
 	"net/http"
 )
 
-// Create an Instance with the given plan in the specified regions,
-// e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
-// Additionally, use a label and a hostname for the new instance
+// createInstance, create an Instance with the given plan in the specified
+// regions, e.g. region="ewr" (New Jersey), plan="vc2-1c-1gb".
+// Additionally, use a label and a hostname for the new instance, all this
+// information is contained in the fields of the newInstance parameter.
 func (app *application) createInstance(newInstance *RequestCreateInstance) (*CreatedInstance, error) {
 	// Create a buffer with Read/Write methods implemented
 	buf := new(bytes.Buffer)
