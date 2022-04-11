@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -48,6 +49,43 @@ func (app *application) createInstance(newInstance *RequestCreateInstance) (*Cre
 	// since the json response encapsulates the actual instance information,
 	// inside an instance object, we have to return only this object
 	return responseJSON.Instance, nil
+}
+
+// getInstance, fetch information of instance already deployed in the Vultr
+// cloud. A pointer to a createdInstance as a parameter has all the information
+// required to perform API call.
+func (app *application) getInstance(instance *CreatedInstance) (*LiveInstance, error) {
+	// Create/format string with URL for running instance
+	URLGetInstanceVultrAPI := fmt.Sprintf("https://api.vultr.com/v2/instances/%s", instance.ID)
+	req, err := http.NewRequest("GET", URLGetInstanceVultrAPI, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	app.addAuthToken(req)
+
+	// Send request to Vultr API
+	resp, err := app.client.Do(req)
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	// if everything went well Vultr API responds with 200 (OK)
+	if err = checkResponseAPI(resp, http.StatusOK); err != nil {
+		return nil, err
+	}
+
+	responseJSON := new(ResponseLiveInstance)
+	// decode response into JSON
+	err = json.NewDecoder(resp.Body).Decode(responseJSON)
+	if err != nil {
+		return nil, err
+	}
+	// since the json response encapsulates the actual instance information,
+	// inside an instance object, we have to return only this object
+	return responseJSON.Instance, nil
+
 }
 
 // List all SSH Keys registered to a particular Vultr account

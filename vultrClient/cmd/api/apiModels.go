@@ -55,12 +55,52 @@ type CreatedInstance struct {
 	KVM              string    `json:"kvm"`
 	Hostname         string    `json:"hostname"`
 	Tag              string    `json:"tag"`
-	OS_id            int       `json:"os_id"`
-	App_id           int       `json:"app_id"`
-	Image_id         string    `json:"image_id"`
+	OSID             int       `json:"os_id"`
+	AppID            int       `json:"app_id"`
+	ImageID          string    `json:"image_id"`
 	FirewallGroupID  string    `json:"firewall_group_id"`
 	Features         []string  `json:"features"`
 	DefaultPassword  string    `json:"default_password"`
+}
+
+// ResponseLiveInstance has the info received from response after requesting
+// the information from a live instance. The JSON response encapsulates the
+// actual instance's data inside a JSON object first.
+type ResponseLiveInstance struct {
+	Instance *LiveInstance `json:"instance"`
+}
+
+// LiveInstance is the data structure that describes a live instance
+type LiveInstance struct {
+	ID        string `json:"id"`
+	OS        string `json:"os"`
+	RAM       int    `json:"ram"`
+	Disk      int    `json:"disk"`
+	MainIP    string `json:"main_ip"`
+	VCPUCount int    `json:"vcpu_count"`
+	// Region is the region where the instance is being deployed
+	Region           string    `json:"region"`
+	Plan             string    `json:"plan"`
+	CreationDate     time.Time `json:"date_created"`
+	Status           string    `json:"status"`
+	AllowedBandwidth int       `json:"allowed_bandwidth"`
+	NetmaskV4        string    `json:"netmask_v4"`
+	GatewayV4        string    `json:"gateway_v4"`
+	PowerStatus      string    `json:"power_status"`
+	ServerStatus     string    `json:"server_status"`
+	V6Network        string    `json:"v6_network"`
+	V6MainIP         string    `json:"v6_main_ip"`
+	V6NetworkSize    int       `json:"v6_network_size"`
+	Label            string    `json:"label"`
+	InternalIP       string    `json:"internal_ip"`
+	KVM              string    `json:"kvm"`
+	Hostname         string    `json:"hostname"`
+	Tag              string    `json:"tag"`
+	OSID             int       `json:"os_id"`
+	AppID            int       `json:"app_id"`
+	ImageID          string    `json:"image_id"`
+	FirewallGroupID  string    `json:"firewall_group_id"`
+	Features         []string  `json:"features"`
 }
 
 // SSHKey is the data structure with the fields that describe a single SSH key

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 // application type used for dependency injection / avoid using globals
@@ -91,6 +92,22 @@ func main() {
 	}
 	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
 
+	for i := 0; i < 200; i++ {
+		time.Sleep(2 * time.Second)
+		instance, err := app.getInstance(createdInstance)
+		if err != nil {
+			app.errorLog.Println(err)
+			continue // skip checking on instance's status, because an error
+			// occurred
+		}
+		if instance.Status == "active" {
+			app.infoLog.Printf("[UP] Status: %s. Main IP: %s", instance.Status, instance.MainIP)
+			break // Status is now active, stop pinging the API
+		}
+
+		app.infoLog.Printf("Status: %s. Main IP: %s", instance.Status, instance.MainIP)
+
+	}
 	//fmt.Printf("%+v\n", createdInstance)
 	//fmt.Println("New instance's ID: ", createdInstance.ID)
 
