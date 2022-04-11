@@ -187,7 +187,11 @@ connectVM(){
 	# establishing an ssh connection
 	# if there is no file with credentials, return, since we are probably 
 	# running the script inside the VM
-	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp ${FILE_NAME} ${SSHD_CONFIG_FILE} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return
+
+	FILES_TO_SEND="${FILE_NAME} ${SSHD_CONFIG_FILE}"
+	# Use the "StrictHostKeyChecking no" ssh option, to not have to agree with
+	# the key fingerprints of the server we are trying to ssh into
+	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp -o "StrictHostKeyChecking no" ${FILES_TO_SEND} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return
 }
 
 main(){

@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -92,22 +93,39 @@ func main() {
 	}
 	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
 
+	// Declare instance outside for-loop to be able to use it afterwards as well
+	instance, _ := app.getInstance(createdInstance)
+
 	for i := 0; i < 200; i++ {
-		time.Sleep(2 * time.Second)
-		instance, err := app.getInstance(createdInstance)
+		time.Sleep(5 * time.Second)
+		instance, err = app.getInstance(createdInstance)
 		if err != nil {
 			app.errorLog.Println(err)
 			continue // skip checking on instance's status, because an error
 			// occurred
 		}
 		if instance.Status == "active" {
-			app.infoLog.Printf("[UP] Status: %s. Main IP: %s", instance.Status, instance.MainIP)
+			app.infoLog.Printf("Instance ID: %s. Status: %s. Main IP: %s", instance.ID, instance.Status, instance.MainIP)
 			break // Status is now active, stop pinging the API
 		}
 
-		app.infoLog.Printf("Status: %s. Main IP: %s", instance.Status, instance.MainIP)
-
 	}
+
+	if instance.MainIP == "" {
+		app.errorLog.Println("The instance's main IP address could not be determined!")
+		return
+	}
+
+	data := []byte(fmt.Sprintf("USER=root\nHOST=%s\n", instance.MainIP))
+	// Write IP address to output file, to better automate working with shell
+	// script that automates installing all the packages.
+	// Only owner has read priviledges on file.
+	err = os.WriteFile("vm_credentials.secrets", data, 0400)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+	app.infoLog.Println("VM's credentials written to file")
+
 	//fmt.Printf("%+v\n", createdInstance)
 	//fmt.Println("New instance's ID: ", createdInstance.ID)
 
