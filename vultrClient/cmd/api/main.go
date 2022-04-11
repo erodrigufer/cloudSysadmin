@@ -4,7 +4,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -87,8 +86,10 @@ func main() {
 		app.errorLog.Println(err)
 		return
 	}
-	fmt.Printf("%+v\n", createdInstance)
-	fmt.Println("New instance's ID: ", createdInstance.ID)
+	app.infoLog.Printf("new instance [ID: %d] created.", createdInstance.ID)
+
+	//fmt.Printf("%+v\n", createdInstance)
+	//fmt.Println("New instance's ID: ", createdInstance.ID)
 
 	//keys, err := app.listSSHKeys()
 	//if err != nil {
