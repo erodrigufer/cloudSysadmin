@@ -5,10 +5,12 @@
 #########################################################################
 HOSTNAME="eee"
 LABEL="eee"
+REGION="par"
 #########################################################################
 
 cd ./vultrClient
 make build
 source  ./secrets/vultrAPI.secrets
-./build/vultrClient.bin -hostname ${HOSTNAME} -label ${LABEL} -sshKey ${SSH_KEY} -tokenAPI ${API_TOKEN}
+./build/vultrClient.bin -hostname ${HOSTNAME} -label ${LABEL} -sshKey \
+	${SSH_KEY} -tokenAPI ${API_TOKEN} -region ${REGION}
 
