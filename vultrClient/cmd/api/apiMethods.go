@@ -88,7 +88,7 @@ func (app *application) getInstance(instance *CreatedInstance) (*LiveInstance, e
 
 }
 
-// List all SSH Keys registered to a particular Vultr account
+// listSSHKeys, list all SSH Keys registered to a particular Vultr account
 func (app *application) listSSHKeys() ([]SSHKey, error) {
 	URLSSHKeysVultrAPI := "https://api.vultr.com/v2/ssh-keys"
 	req, err := http.NewRequest("GET", URLSSHKeysVultrAPI, nil)
