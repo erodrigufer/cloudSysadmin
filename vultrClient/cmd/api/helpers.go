@@ -6,7 +6,8 @@ import (
 	"net/http"
 )
 
-// Add the necessary headers to get authenticated by the Vultr API
+// addAuthToken, adds the necessary headers to get authenticated by the
+// Vultr API.
 func (app *application) addAuthToken(req *http.Request) {
 	// Format token value for header. Add 'Bearer' before token
 	tokenValue := fmt.Sprint("Bearer ", app.cfg.tokenAPI)
@@ -14,8 +15,9 @@ func (app *application) addAuthToken(req *http.Request) {
 	req.Header.Add("Content-Type", "application/json")
 }
 
-// Check if the response from the API is correct, if not return error
-// The input parameter is the expected correct HTTP response
+// checkResponseAPI, checks if the response from the API is correct, if not
+// it returns error.
+// The input parameter is the expected correct HTTP response.
 func checkResponseAPI(resp *http.Response, correctResponse int) (err error) {
 	// if everything went well Vultr API responds with "correctResponse"
 	if resp.StatusCode != correctResponse {
