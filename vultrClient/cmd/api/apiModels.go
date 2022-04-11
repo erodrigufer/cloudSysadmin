@@ -8,14 +8,16 @@ import (
 // RequestCreateInstance has the info necessary to request the creation of a
 // new instance
 type RequestCreateInstance struct {
-	ID       string   `json:"id,omitempty"` // omitempty= if value is not present, omit at encoding
-	OS_id    int      `json:"os_id"`
-	Label    string   `json:"label,omitempty"`
-	Hostname string   `json:"hostname,omitempty"`
-	Region   string   `json:"region"`
-	Plan     string   `json:"plan"`
-	Backups  string   `json:"backups"` // disabled (no backups)
-	SSHKeys  []string `json:"sshkey_id,omitempty"`
+	ID       string `json:"id,omitempty"` // omitempty= if value is not present, omit at encoding
+	OS_id    int    `json:"os_id"`
+	Label    string `json:"label,omitempty"`
+	Hostname string `json:"hostname,omitempty"`
+	Region   string `json:"region"`
+	Plan     string `json:"plan"`
+	Backups  string `json:"backups"` // disabled (no backups)
+	// SSHKeys is a slice with the IDs of the SSH keys that should be used per
+	// default when initializing the newly requested instance
+	SSHKeys []string `json:"sshkey_id,omitempty"`
 	// with backups is more expensive
 }
 
