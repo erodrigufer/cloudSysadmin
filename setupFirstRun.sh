@@ -14,9 +14,10 @@ MAIN_USER="hap"
 
 # Package naming used by FreeBSD pkg
 # lf-26 is the Go terminal file manager
-PACKAGES2INSTALL="git vim curl go lf"
+# duf is a modern version of 'df', free disk utility
+PACKAGES2INSTALL="git vim curl go lf duf"
 # hey is used to send load to web applications
-WEBDEVPACKAGES="mariadb105-server hey"
+WEBDEVPACKAGES="mariadb105-server hey sqlite3"
 #########################################################################
 # Internal global variables, which should not be modified by user
 
