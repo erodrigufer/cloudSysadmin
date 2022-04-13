@@ -4,7 +4,7 @@
 
 #########################################################################
 HOSTNAME="eee"
-LABEL="logwatch-test"
+LABEL="newInstance"
 REGION="fra"
 #########################################################################
 
@@ -15,7 +15,7 @@ make build
 source  ./secrets/vultrAPI.secrets
 cd ..
 ./vultrClient/build/vultrClient.bin -hostname ${HOSTNAME} -label ${LABEL} -sshKey \
-	${SSH_KEY} -tokenAPI ${API_TOKEN} -region ${REGION}
+	${SSH_KEY} -tokenAPI ${API_TOKEN} -region ${REGION} || exit -1
 
 # Source the newly acquired credentials for the VM
 source ./vm_credentials.secrets

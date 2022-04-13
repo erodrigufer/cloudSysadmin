@@ -89,7 +89,7 @@ func main() {
 	createdInstance, err := app.createInstance(newInstance)
 	if err != nil {
 		app.errorLog.Println(err)
-		return
+		os.Exit(1)
 	}
 	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
 
