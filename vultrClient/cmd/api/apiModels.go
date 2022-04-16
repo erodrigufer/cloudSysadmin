@@ -29,7 +29,7 @@ type ResponseCreateInstance struct {
 	Instance *CreatedInstance `json:"instance"`
 }
 
-// CreatedInstance is the data structure that describes a created instances
+// CreatedInstance is the data structure that describes a created instance
 type CreatedInstance struct {
 	ID        string `json:"id"`
 	OS        string `json:"os"`
