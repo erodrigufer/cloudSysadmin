@@ -35,6 +35,8 @@ type configValues struct {
 	label string
 	// region, region where to deplay VM
 	region string
+	// action to perform with this script, e.g. 'deploy', 'list', 'delete'
+	action string
 }
 
 func main() {
@@ -58,9 +60,14 @@ func main() {
 	flag.StringVar(&cfg.hostname, "hostname", "", "Hostname for new instance")
 	flag.StringVar(&cfg.label, "label", "", "Label for new instance")
 	flag.StringVar(&cfg.region, "region", "fra", "Region where to deply VM")
+	flag.StringVar(&cfg.action, "action", "", "Action to perform with this script")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
+	}
+	if cfg.action == "" {
+		// TODO: print usage and option for action
+		app.errorLog.Fatal("no action was specified")
 	}
 
 	app.cfg = cfg
@@ -86,9 +93,33 @@ func main() {
 	// string is appended
 	newInstance.SSHKeys = append(newInstance.SSHKeys, app.cfg.sshkey)
 
+	// create a new instance
+	if app.cfg.action == "create" {
+		if err := app.actionCreate(newInstance); err != nil {
+			app.errorLog.Println(err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
+	//fmt.Printf("%+v\n", createdInstance)
+	//fmt.Println("New instance's ID: ", createdInstance.ID)
+
+	//keys, err := app.listSSHKeys()
+	//if err != nil {
+	//	app.errorLog.Println(err)
+	//	return
+	//}
+	//fmt.Printf("SSH Keys: %+v\n", keys)
+}
+
+// actionCreate, if the flag action is equal to create, a new instance will be
+// created
+func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 	createdInstance, err := app.createInstance(newInstance)
 	if err != nil {
 		app.errorLog.Println(err)
+		return err
 		os.Exit(1)
 	}
 	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
@@ -96,6 +127,7 @@ func main() {
 	// Declare instance outside for-loop to be able to use it afterwards as well
 	instance, _ := app.getInstance(createdInstance)
 
+	// Ping newly created instance to get its IP address
 	for i := 0; i < 200; i++ {
 		time.Sleep(5 * time.Second)
 		instance, err = app.getInstance(createdInstance)
@@ -113,26 +145,22 @@ func main() {
 
 	if instance.MainIP == "" {
 		app.errorLog.Println("The instance's main IP address could not be determined!")
-		return
+		// TODO: create a new error like in the helper function to properly
+		// return an error here
+		return nil
 	}
 
+	// Store the IP address of the new instance in a text file
 	data := []byte(fmt.Sprintf("USER=root\nHOST=%s\n", instance.MainIP))
 	// Write IP address to output file, to better automate working with shell
 	// script that automates installing all the packages.
 	// Only owner has read priviledges on file.
 	err = os.WriteFile("vm_credentials.secrets", data, 0400)
 	if err != nil {
-		app.errorLog.Println(err)
+		return err
 	}
 	app.infoLog.Println("VM's credentials written to file")
 
-	//fmt.Printf("%+v\n", createdInstance)
-	//fmt.Println("New instance's ID: ", createdInstance.ID)
+	return nil
 
-	//keys, err := app.listSSHKeys()
-	//if err != nil {
-	//	app.errorLog.Println(err)
-	//	return
-	//}
-	//fmt.Printf("SSH Keys: %+v\n", keys)
 }
