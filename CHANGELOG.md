@@ -1,3 +1,5 @@
+## v0.2.1
+* Add untested deleteInstance method, and refactor code of main.go to enable 'action' flag
 ## v0.2.0
 * Dramatically improve the start-up performance by removing the installation of the _vim-go_ plug from the vimrc file with sed.
 
