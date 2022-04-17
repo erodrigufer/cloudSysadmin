@@ -137,7 +137,6 @@ func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 			app.infoLog.Printf("Instance ID: %s. Status: %s. Main IP: %s", instance.ID, instance.Status, instance.MainIP)
 			break // Status is now active, stop pinging the API
 		}
-
 	}
 
 	if instance.MainIP == "" {
