@@ -118,9 +118,7 @@ func main() {
 func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 	createdInstance, err := app.createInstance(newInstance)
 	if err != nil {
-		app.errorLog.Println(err)
 		return err
-		os.Exit(1)
 	}
 	app.infoLog.Printf("new instance [ID: %s] created.", createdInstance.ID)
 
@@ -133,8 +131,7 @@ func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 		instance, err = app.getInstance(createdInstance)
 		if err != nil {
 			app.errorLog.Println(err)
-			continue // skip checking on instance's status, because an error
-			// occurred
+			continue // try checking again, getInstance() method failed
 		}
 		if instance.Status == "active" {
 			app.infoLog.Printf("Instance ID: %s. Status: %s. Main IP: %s", instance.ID, instance.Status, instance.MainIP)
@@ -144,10 +141,7 @@ func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 	}
 
 	if instance.MainIP == "" {
-		app.errorLog.Println("The instance's main IP address could not be determined!")
-		// TODO: create a new error like in the helper function to properly
-		// return an error here
-		return nil
+		return fmt.Errorf("The instance's main IP address could not be determined!")
 	}
 
 	// Store the IP address of the new instance in a text file
