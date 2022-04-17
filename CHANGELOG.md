@@ -1,3 +1,5 @@
+## v0.3.0
+* Properly implement deleting an instance into the main.go file
 ## v0.2.2
 * Add unit test for checkResponseAPI()
 ## v0.2.1

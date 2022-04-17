@@ -37,6 +37,8 @@ type configValues struct {
 	region string
 	// action to perform with this script, e.g. 'deploy', 'list', 'delete'
 	action string
+	// perform action on this instance (related through ID)
+	instanceID string
 }
 
 func main() {
@@ -61,6 +63,7 @@ func main() {
 	flag.StringVar(&cfg.label, "label", "", "Label for new instance")
 	flag.StringVar(&cfg.region, "region", "fra", "Region where to deply VM")
 	flag.StringVar(&cfg.action, "action", "", "Action to perform with this script")
+	flag.StringVar(&cfg.instanceID, "instanceID", "", "Actions are performed on this instance (ID)")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
@@ -102,9 +105,14 @@ func main() {
 		os.Exit(0)
 	}
 
-	//fmt.Printf("%+v\n", createdInstance)
-	//fmt.Println("New instance's ID: ", createdInstance.ID)
-
+	// delete instance
+	if app.cfg.action == "delete" {
+		if err := app.actionDelete(app.cfg.instanceID); err != nil {
+			app.errorLog.Println(err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
 	//keys, err := app.listSSHKeys()
 	//if err != nil {
 	//	app.errorLog.Println(err)
@@ -144,7 +152,7 @@ func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 	}
 
 	// Store the IP address of the new instance in a text file
-	data := []byte(fmt.Sprintf("USER=root\nHOST=%s\n", instance.MainIP))
+	data := []byte(fmt.Sprintf("USER=root\nHOST=%s\nINSTANCE_ID=%s\n", instance.MainIP, instance.ID))
 	// Write IP address to output file, to better automate working with shell
 	// script that automates installing all the packages.
 	// Only owner has read priviledges on file.
@@ -156,4 +164,14 @@ func (app *application) actionCreate(newInstance *RequestCreateInstance) error {
 
 	return nil
 
+}
+
+// actionDelete, if the flag action is equal to delete, the specified instance
+// will be deleted. Parameter is the instance's ID as a string
+func (app *application) actionDelete(instanceID string) error {
+	if err := app.deleteInstance(instanceID); err != nil {
+		return err
+	}
+	app.infoLog.Printf("Instance %s was correctly deleted.\n", instanceID)
+	return nil
 }
