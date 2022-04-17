@@ -89,10 +89,10 @@ func (app *application) getInstance(instance *CreatedInstance) (*LiveInstance, e
 }
 
 // deleteInstance, deletes an actively running instance. The input parameter
-// is a pointer to an instance of type 'LiveInstance'
-func (app *application) deleteInstance(instance *LiveInstance) error {
+// is a string with the instance's ID
+func (app *application) deleteInstance(instanceID string) error {
 	// Create/format string with URL for running instance
-	URLDeleteInstanceVultrAPI := fmt.Sprintf("https://api.vultr.com/v2/instances/%s", instance.ID)
+	URLDeleteInstanceVultrAPI := fmt.Sprintf("https://api.vultr.com/v2/instances/%s", instanceID)
 	req, err := http.NewRequest("DELETE", URLDeleteInstanceVultrAPI, nil)
 	if err != nil {
 		return err
