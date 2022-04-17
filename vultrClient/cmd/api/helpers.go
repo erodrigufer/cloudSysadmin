@@ -20,7 +20,7 @@ func (app *application) addAuthToken(req *http.Request) {
 func checkResponseAPI(resp *http.Response, correctResponse int) (err error) {
 	// if everything went well Vultr API responds with "correctResponse"
 	if resp.StatusCode != correctResponse {
-		err = fmt.Errorf("request failed. Response status: %s, expected %d", resp.Status, correctResponse)
+		err = fmt.Errorf("request failed. Response status: %d, expected %d", resp.StatusCode, correctResponse)
 		return
 	}
 	return nil
