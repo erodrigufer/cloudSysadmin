@@ -1,3 +1,5 @@
+## v0.2.2
+* Add unit test for checkResponseAPI()
 ## v0.2.1
 * Add untested deleteInstance method, and refactor code of main.go to enable 'action' flag
 ## v0.2.0
