@@ -1,3 +1,5 @@
+## v0.3.1
+* Fix minor issue: sed was not commenting out the line for _vim-go_ initialization in the vimrc file.
 ## v0.3.0
 * Properly implement deleting an instance into the main.go file
 ## v0.2.2
