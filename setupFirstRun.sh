@@ -141,7 +141,7 @@ configure_dotfiles(){
 	# Eliminate vim-go in the local installation
 	# Reference to escape single quotes:
 	# https://stackoverflow.com/questions/24509214/how-to-escape-single-quote-in-sed
-	sed -i '' -e 's/^Plug.*fatih/"Plug '\''fatih/' ./.vimrc
+	sed -i '' -e 's/^Plug.*fatih/"Plug '\''fatih/' ./vimrc
 	make || { rm -fR ${HOME}${REPO_PATH}; print_error "Creating symlinks to dotfiles failed!"; exit -1; }
 
 	# Install vim plugins in the background
