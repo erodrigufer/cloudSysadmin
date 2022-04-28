@@ -1,3 +1,6 @@
+## v0.4.0
+* Load the configuration details for the server from a .env file
+* [BUG] the system does not properly source the packages that have to be installed in the new VM
 ## v0.3.1
 * Fix minor issue: sed was not commenting out the line for _vim-go_ initialization in the vimrc file.
 ## v0.3.0
