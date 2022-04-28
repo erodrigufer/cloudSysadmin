@@ -2,11 +2,19 @@
 # Eduardo Rodriguez [@erodrigufer] 2022 (c) 
 # Spawn a VM in Vultr Cloud using the Go client for the Vultr API
 
+# Default values, just in case that configVM.env does not exist, or it
+# even exists, but does not contain these variables. So the program would still
+# work with some default values even if the .env file is missing some variables.
 #########################################################################
 HOSTNAME="eee"
 LABEL="newInstance"
 REGION="fra"
 #########################################################################
+# If the .env file is configured correctly, its variables should over-write the
+# default ones.
+if [ -f configVM.env ]; then
+	source configVM.env
+fi
 
 # Eliminate credentials file, if it already exists
 rm -f ./vm_credentials.secrets

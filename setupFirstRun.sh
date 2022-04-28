@@ -7,8 +7,11 @@
 #	key authentication
 # - It installs common useful packages and, if desired, packages for web dev.
 
+# Default values, just in case that configVM.env does not exist, or it
+# even exists, but does not contain these variables. So the program would still
+# work with some default values even if the .env file is missing some variables.
 #########################################################################
-#User-defined input parameters
+# Default user-defined input parameters
 
 MAIN_USER="hap"
 
@@ -18,6 +21,12 @@ MAIN_USER="hap"
 PACKAGES2INSTALL="git vim curl go lf duf"
 # hey is used to send load to web applications
 WEBDEVPACKAGES="mariadb105-server hey sqlite3"
+
+# If the .env file is configured correctly, its variables should over-write the
+# default ones.
+if [ -f configVM.env ]; then
+	source configVM.env
+fi
 #########################################################################
 # Internal global variables, which should not be modified by user
 
