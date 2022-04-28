@@ -9,6 +9,7 @@
 HOSTNAME="eee"
 LABEL="newInstance"
 REGION="fra"
+PLAN="vc2-1c-1gb" # cheapest/most basic plan
 #########################################################################
 # If the .env file is configured correctly, its variables should over-write the
 # default ones.
@@ -23,7 +24,7 @@ make build
 source  ./secrets/vultrAPI.secrets
 cd ..
 ./vultrClient/build/vultrClient.bin -action "create" -hostname ${HOSTNAME} -label ${LABEL} -sshKey \
-	${SSH_KEY} -tokenAPI ${API_TOKEN} -region ${REGION} || exit -1
+	${SSH_KEY} -tokenAPI ${API_TOKEN} -region ${REGION} -plan ${PLAN} || exit -1
 
 # Source the newly acquired credentials for the VM
 source ./vm_credentials.secrets

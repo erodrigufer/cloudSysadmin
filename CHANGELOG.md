@@ -1,3 +1,5 @@
+## v0.5.0
+* Instance's plan is now configurable through the .env file.
 ## v0.4.0
 * Load the configuration details for the server from a .env file
 * [BUG] the system does not properly source the packages that have to be installed in the new VM

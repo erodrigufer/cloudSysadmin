@@ -35,6 +35,8 @@ type configValues struct {
 	label string
 	// region, region where to deplay VM
 	region string
+	// plan, the kind of VM that will be deployed
+	plan string
 	// action to perform with this script, e.g. 'deploy', 'list', 'delete'
 	action string
 	// perform action on this instance (related through ID)
@@ -64,6 +66,7 @@ func main() {
 	flag.StringVar(&cfg.region, "region", "fra", "Region where to deply VM")
 	flag.StringVar(&cfg.action, "action", "", "Action to perform with this script")
 	flag.StringVar(&cfg.instanceID, "instanceID", "", "Actions are performed on this instance (ID)")
+	flag.StringVar(&cfg.plan, "plan", "vc2-1c-1gb", "Create an instance with this plan")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
@@ -87,7 +90,7 @@ func main() {
 		Region:  app.cfg.region, // New Jersey (ewr) Frankfurt (fra)
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
-		Plan:     "vc2-1c-1gb",
+		Plan:     app.cfg.plan,
 		Hostname: app.cfg.hostname,
 		Label:    app.cfg.label,
 	}
