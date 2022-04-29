@@ -1,6 +1,8 @@
 #!/bin/sh
 # Eduardo Rodriguez [@erodrigufer] 2022 (c) 
-# Spawn a VM in Vultr Cloud using the Go client for the Vultr API
+# Spawn a VM in Vultr Cloud using a self-made Go client for the Vultr API
+#
+#########################################################################
 
 # Default values, just in case that configVM.env does not exist, or it
 # even exists, but does not contain these variables. So the program would still
