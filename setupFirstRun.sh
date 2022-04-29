@@ -15,12 +15,17 @@
 
 MAIN_USER="hap"
 
+if [ -z ${PACKAGE2INSTALL} ]; then 
 # Package naming used by FreeBSD pkg
 # lf-26 is the Go terminal file manager
 # duf is a modern version of 'df', free disk utility
 PACKAGES2INSTALL="git vim curl go lf duf htop"
 # hey is used to send load to web applications
+fi
+
+if [ -z ${WEBDEVPACKAGES} ]; then 
 WEBDEVPACKAGES="mariadb105-server hey sqlite3"
+fi
 
 # If the .env file is configured correctly, its variables should over-write the
 # default ones.

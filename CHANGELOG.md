@@ -1,3 +1,5 @@
+## v0.6.0
+* Instance's OS is now configurable through the .env file, FreeBSD 13 is still the default option.
 ## v0.5.0
 * Instance's plan is now configurable through the .env file.
 ## v0.4.0

@@ -37,6 +37,8 @@ type configValues struct {
 	region string
 	// plan, the kind of VM that will be deployed
 	plan string
+	//osID, the OS do be installed in the new instance
+	osID int
 	// action to perform with this script, e.g. 'deploy', 'list', 'delete'
 	action string
 	// perform action on this instance (related through ID)
@@ -67,6 +69,7 @@ func main() {
 	flag.StringVar(&cfg.action, "action", "", "Action to perform with this script")
 	flag.StringVar(&cfg.instanceID, "instanceID", "", "Actions are performed on this instance (ID)")
 	flag.StringVar(&cfg.plan, "plan", "vc2-1c-1gb", "Create an instance with this plan")
+	flag.IntVar(&cfg.osID, "os", 447, "OS of the new instance (default FreeBSD-13)")
 	flag.Parse()
 	if cfg.tokenAPI == "" {
 		app.errorLog.Fatal("missing API token")
@@ -86,8 +89,8 @@ func main() {
 	app.client = new(http.Client)
 
 	newInstance := &RequestCreateInstance{
-		OS_ID:   447,            // FreeBSD-13
-		Region:  app.cfg.region, // New Jersey (ewr) Frankfurt (fra)
+		OS_ID:   app.cfg.osID,
+		Region:  app.cfg.region,
 		Backups: "disabled",
 		// Enabling backups makes the VM more expensive
 		Plan:     app.cfg.plan,
