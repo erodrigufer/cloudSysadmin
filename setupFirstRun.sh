@@ -15,7 +15,13 @@
 
 MAIN_USER="hap"
 
-if [ -z ${PACKAGE2INSTALL} ]; then 
+# If the .env file is configured correctly, its variables should over-write the
+# default ones.
+if [ -f ./configVM.env ]; then
+	. ./configVM.env
+fi
+
+if [ -z ${PACKAGES2INSTALL} ]; then 
 # Package naming used by FreeBSD pkg
 # lf-26 is the Go terminal file manager
 # duf is a modern version of 'df', free disk utility
@@ -27,11 +33,6 @@ if [ -z ${WEBDEVPACKAGES} ]; then
 WEBDEVPACKAGES="mariadb105-server hey sqlite3"
 fi
 
-# If the .env file is configured correctly, its variables should over-write the
-# default ones.
-if [ -f configVM.env ]; then
-	source configVM.env
-fi
 #########################################################################
 # Internal global variables, which should not be modified by user
 
@@ -49,6 +50,8 @@ SSHD_CONFIG_FILE="./etc/sshd_config"
 # Internal global variables, which can be modified by user
 
 FILE_VM_CREDENTIALS=vm_credentials.secrets # file with ssh credentials for VM
+FILE_USER_CONFIG="./configVM.env" # file that describes which packages to 
+# install, which instance to initiate and so on...
 FILE_NAME=$0 # name of this same file
 PATH_IN_VM="/root/" # where to store setup script in VM, from which it is then
 					# run inside the VM after establishing ssh connection
@@ -142,6 +145,9 @@ install_bare_packages(){
 
 # configure vim, its plugins, tmux, lf, all dotfiles
 configure_dotfiles(){
+	# If git or curl are not present, return without installing the dotfiles
+	which git > /dev/null || return
+	which curl > /dev/null || return
 	# Install vim-plug to handle plugins
 	# Reference: https://github.com/junegunn/vim-plug
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -207,7 +213,7 @@ connectVM(){
 	# if there is no file with credentials, return, since we are probably 
 	# running the script inside the VM
 
-	FILES_TO_SEND="${FILE_NAME} ${SSHD_CONFIG_FILE}"
+	FILES_TO_SEND="${FILE_NAME} ${SSHD_CONFIG_FILE} ${FILE_USER_CONFIG}"
 	# Use the "StrictHostKeyChecking no" ssh option, to not have to agree with
 	# the key fingerprints of the server we are trying to ssh into
 	[ -f ${FILE_VM_CREDENTIALS} ] && { source ${FILE_VM_CREDENTIALS}; scp -o "StrictHostKeyChecking no" ${FILES_TO_SEND} ${USER}@${HOST}:${PATH_IN_VM} && ssh ${USER}@${HOST} ${PATH_IN_VM}$(basename ${FILE_NAME}) && exit 0; } || return

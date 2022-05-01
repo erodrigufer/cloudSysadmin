@@ -16,8 +16,8 @@ OS="447"	# FreeBSD-13
 #########################################################################
 # If the .env file is configured correctly, its variables should over-write the
 # default ones.
-if [ -f configVM.env ]; then
-	source configVM.env
+if [ -f ./configVM.env ]; then
+	. ./configVM.env
 fi
 
 # Eliminate credentials file, if it already exists
@@ -31,10 +31,10 @@ cd ..
 
 # Source the newly acquired credentials for the VM
 source ./vm_credentials.secrets
-# Ping the newly created VM every 7 seconds, until it is up and running
-ping -o -i 7 ${HOST}
+# Ping the newly created VM every 10 seconds, until it is up and running
+ping -o -i 10 ${HOST}
 # SSH into the VM, do not ask to check key fingerprinting for new host
 # ssh -o "StrictHostKeyChecking no" root@${HOST}
-./setupFirstRun.sh
+./setupFirstRun.sh 
 # After finishing setup, ssh into the VM
 ssh ${USER}@${HOST}

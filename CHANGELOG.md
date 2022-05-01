@@ -1,3 +1,5 @@
+## v0.7.0
+* Fix big issue (#6), the system now properly sources the packages that will be installed in the VM
 ## v0.6.0
 * Instance's OS is now configurable through the .env file, FreeBSD 13 is still the default option.
 ## v0.5.0
