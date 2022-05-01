@@ -145,9 +145,10 @@ install_bare_packages(){
 
 # configure vim, its plugins, tmux, lf, all dotfiles
 configure_dotfiles(){
-	# If git or curl are not present, return without installing the dotfiles
+	# If git, vim or curl are not present, return without installing the dotfiles
 	which git > /dev/null || return
 	which curl > /dev/null || return
+	which vim > /dev/null || return
 	# Install vim-plug to handle plugins
 	# Reference: https://github.com/junegunn/vim-plug
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \

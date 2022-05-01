@@ -1,3 +1,5 @@
+## v0.7.1
+* Require also Vim, when configuring the dotfiles in the VM
 ## v0.7.0
 * Fix big issue (#6), the system now properly sources the packages that will be installed in the VM
 ## v0.6.0
