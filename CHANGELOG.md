@@ -1,3 +1,5 @@
+## v0.7.2
+* Add more specific error/diagnostic message for 401 Unauthorized response.
 ## v0.7.1
 * Require also Vim, when configuring the dotfiles in the VM
 ## v0.7.0
